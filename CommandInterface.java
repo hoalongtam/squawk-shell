@@ -4,7 +4,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommandInterface {
   
@@ -40,6 +43,7 @@ public class CommandInterface {
   private InputStream stderr = null;
   private InputStream stdout = null;
   private final Process process;
+  private static HashMap<String, String> aproposBuffer;
   
   private final BufferedReader br, er;
   static private GUI viewer;
@@ -99,7 +103,7 @@ public class CommandInterface {
     }
     String line;
     line = command;
-    viewer.receiveResponse("# " + line);
+    viewer.receiveResponse("bash # " + line);
     stdin.write(line.getBytes());
     stdin.flush();
     
@@ -151,4 +155,67 @@ public class CommandInterface {
     
     return false;
   }
+  
+  public void apropos() throws InterruptedException, IOException {
+    
+    aproposBuffer = new HashMap<String, String>();
+    Runtime r = Runtime.getRuntime();
+    Process man = r.exec("apropos (1)");
+    BufferedReader man_output = new BufferedReader(
+                                                   new InputStreamReader(
+                                                                         man.getInputStream()));
+    // InputStream man_error = man.getErrorStream();
+    /*
+     * if (status != 0) { int error_msg_size = man_error.available(); for (int i
+     * = 0; i < error_msg_size; i += 1) { System.err.printf("%c",
+     * (char)man_error.read()); } return; }
+     */
+
+    Thread.sleep(1000);
+    StringBuilder sb = new StringBuilder();
+    String line = null;
+    while ((line = man_output.readLine()) != null) {
+      sb.append(line + "\n");
+    }
+    
+    parseManBuffer(sb.toString());
+  }
+  
+  public void parseManBuffer(String s) {
+    Pattern p = Pattern.compile("(.+?)\\s+-\\s+(.+)");
+    Matcher m = null, m2 = null;
+    m = p.matcher(s);
+    while (m.find()) {
+      LinkedList<String> nameList = new LinkedList<String>();
+      String names = m.group(1);
+      String rhs = m.group(2);
+      
+      Pattern p2 = Pattern.compile("(.+)\\(1\\),?(.*)");
+      m2 = p2.matcher(names);
+      while (m2.find()) {
+        nameList.add(m2.group(1));
+      }
+      
+      for (String name : nameList) {
+        aproposBuffer.put(name, rhs);
+      }
+      
+    }
+  }
+  
+  public String[] searchBuffer(String c) {
+    LinkedList<String> items = new LinkedList<String>();
+    for (String key : aproposBuffer.keySet()) {
+      if (key.startsWith(c)) {
+        items.add(key + " -- " + aproposBuffer.get(key) + "\n");
+      }
+    }
+    String[] sarry = new String[items.size()];
+    int i = 0;
+    for (Object o : items) {
+      sarry[i++] = (String)o;
+    }
+    return sarry;
+  }
+  
 }
