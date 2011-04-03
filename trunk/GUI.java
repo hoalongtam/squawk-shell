@@ -155,7 +155,7 @@ public class GUI extends javax.swing.JFrame {
     jScrollPane1.setViewportView(manPageList);
     
     jTextField1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-    jTextField1.setText("Common Commands");
+    jTextField1.setText("Command Information");
     jTextField1.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
