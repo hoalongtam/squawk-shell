@@ -11,10 +11,15 @@ public class CommandInterface {
 		CommandInterface controller;
 		GUI viewer;
 
+
 		public void run(){
 			try {
 				String line;
 				while ((line = ear.readLine ()) != null && !shutdown) {
+                                    if (dirSet)
+                                        viewer.directoryChange(line);
+
+                                    else
 					viewer.receiveResponse(line);
 				}
 			}catch (java.io.IOException e) {}
@@ -45,7 +50,7 @@ public class CommandInterface {
 	public String title;
 	private boolean master;
 	private boolean shutdown;
-	
+	boolean dirSet = false;
 	ShellListener sl, el;
 
 
@@ -109,6 +114,13 @@ public class CommandInterface {
 		line = command + "\n";   
 		stdin.write(line.getBytes() );
 		stdin.flush();
+
+                this.dirSet = true;
+                line = "pwd\n";
+                stdin.write(line.getBytes() );
+		stdin.flush();
+                this.dirSet = false;
+
 	}
 	
 	public void terminate(){
