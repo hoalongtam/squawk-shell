@@ -19,29 +19,30 @@
  * along with Sqawk-Shell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FormatMan {
-
+  
   String page;
   
   /**
    * Construct a new FormatMan object to handle formatting of the given |page|.
-   *
-   * @param page The name of the manual page to format.
+   * 
+   * @param page
+   *          The name of the manual page to format.
    */
   public FormatMan(String page) {
     this.page = page;
   }
   
-  private String format() throws IOException, InterruptedException {
+  public String format() throws IOException, InterruptedException {
     Runtime r = Runtime.getRuntime();
     Process man = r.exec(String.format("man %s", page));
     InputStream man_output = man.getInputStream();
     InputStream man_error = man.getErrorStream();
     String formatted_output = "";
-
+    
     int status = man.waitFor();
     if (status != 0) {
       int error_msg_size = man_error.available();
@@ -53,7 +54,7 @@ public class FormatMan {
     int output_size = man_output.available();
     byte[] buf = new byte[output_size];
     man_output.read(buf);
-
+    
     byte[] text_buf = new byte[output_size];
     byte[] format_buf = new byte[output_size];
     
@@ -85,13 +86,13 @@ public class FormatMan {
       i += 1;
       j += 1;
     }
-
+    
     StringBuffer html = new StringBuffer();
-    html.append("<p style=\"font-family:menlo,monaco,courier,monospace\">");
-
+    html.append("<html><body><p style=\"font-family:menlo,monaco,courier,monospace\">");
+    
     boolean underline = false;
     boolean bold = false;
-
+    
     for (i = 0; i < j; i += 1) {
       byte letter = text_buf[i];
       byte format = format_buf[i];
@@ -118,11 +119,11 @@ public class FormatMan {
       }
     }
     
-    html.append("</font>");
+    html.append("</font></body></html>");
     
     return new String(html);
   }
-
+  
   public static void main(String[] args) {
     FormatMan p = new FormatMan("man");
     try {
@@ -130,4 +131,3 @@ public class FormatMan {
     } catch (Exception e) {}
   }
 }
-

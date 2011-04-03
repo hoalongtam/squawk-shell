@@ -16,14 +16,21 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Sqawk-Shell.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Squawk-Shell.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 
+import javax.swing.GroupLayout;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.ListView;
 
 /*
@@ -45,12 +52,11 @@ public class GUI extends javax.swing.JFrame {
   
   private CommandInterface ci;
   private ListView folderView;
-  private final boolean command_issued = false;
   
   /** Creates new form GUI */
   public GUI() {
     initComponents();
-    ShellChooser.setDragEnabled(true);
+    shellChooser.setDragEnabled(true);
     try {
       ci = new CommandInterface(this);
     } catch (IOException ex) {
@@ -81,7 +87,7 @@ public class GUI extends javax.swing.JFrame {
     menu1 = new java.awt.Menu();
     panelInfo = new javax.swing.JPanel();
     jScrollPane1 = new javax.swing.JScrollPane();
-    jTextArea2 = new javax.swing.JTextArea();
+    manPageList = new javax.swing.JList();
     jTextField1 = new javax.swing.JTextField();
     fileViewerFrame = new javax.swing.JPanel();
     shellChooser = new javax.swing.JFileChooser();
@@ -103,12 +109,11 @@ public class GUI extends javax.swing.JFrame {
     shellText = new java.awt.TextArea();
     label1 = new java.awt.Label();
     
-    javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(
-                                                                        jFrame1.getContentPane());
+    GroupLayout jFrame1Layout = new GroupLayout(jFrame1.getContentPane());
     jFrame1.getContentPane().setLayout(jFrame1Layout);
-    jFrame1Layout.setHorizontalGroup(jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+    jFrame1Layout.setHorizontalGroup(jFrame1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                   .addGap(0, 400, Short.MAX_VALUE));
-    jFrame1Layout.setVerticalGroup(jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+    jFrame1Layout.setVerticalGroup(jFrame1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addGap(0, 300, Short.MAX_VALUE));
     
     menu1.setLabel("File");
@@ -118,12 +123,54 @@ public class GUI extends javax.swing.JFrame {
     
     panelInfo.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
     
-    jTextArea2.setColumns(20);
-    jTextArea2.setEditable(false);
-    jTextArea2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-    jTextArea2.setRows(5);
-    jTextArea2.setText("apropos: search for useful commands\n\ncat: Display the contents of a file \n\ncd: change directory\n\ncp:  Copy one or more files to another location \n\nchmod: change file access permission\n\ndiff: Display the differences between two files \n\necho: Display message on screen\n\ngrep: Search for lines that match a given pattern\n\nkill: Stop a process from running \n\nless:\n\nls: list files directorys\n\nman: Help manual \n\nmv: move file \nmv oldfilename newfilename\n\nmkdir: Create new folder(s)\n\nrm: delete a file\n\nrmdir: remove a file\n\nscp: secure copy\n\nsed: Stream Editors\n ");
-    jScrollPane1.setViewportView(jTextArea2);
+    manPageList.setFixedCellWidth(20);
+    manPageList.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
+    manPageList.setModel(new javax.swing.AbstractListModel() {
+      private static final long serialVersionUID = 1L;
+      String[] items = { "apropos -- search the whatis database for strings",
+                        "awk -- pattern-directed scanning and processing language",
+                        "cat -- concatenate and print files",
+                        "cd -- change directory",
+                        "chmod -- change file modes or Access Control Lists",
+                        "cp -- copy files", "diff - compare files line by line",
+                        "echo -- write arguments to the standard output",
+                        "grep -- print lines matching a pattern",
+                        "kill -- terminate or signal a process",
+                        "ls -- list directory contents",
+                        "man -- format and display the on-line manual pages",
+                        "mkdir -- make directories", "mv -- move files",
+                        "rm -- remove directory entries",
+                        "rmdir -- remove directories",
+                        "scp -- secure copy (remote file copy program)",
+                        "sed -- stream editor" };
+      
+      @Override
+      public int getSize() {
+        return items.length;
+      }
+      
+      @Override
+      public Object getElementAt(int i) {
+        return items[i];
+      }
+    });
+    final String[] cmd_names = { "apropos", "awk", "cat", "cd", "chmod", "cp",
+                                "diff", "echo", "grep", "kill", "ls", "man",
+                                "mkdir", "mv", "rm", "rmdir", "scp", "sed" };
+    
+    manPageList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+    manPageList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    manPageList.addMouseListener(new java.awt.event.MouseAdapter() {
+      @Override
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        if (evt.getClickCount() == 2) {
+          int i = manPageList.locationToIndex(evt.getPoint());
+          popupManPage(cmd_names[i], false);
+        }
+      }
+    });
+    
+    jScrollPane1.setViewportView(manPageList);
     
     jTextField1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
     jTextField1.setText("List of Common Shell Commands");
@@ -314,7 +361,45 @@ public class GUI extends javax.swing.JFrame {
   // GEN-LAST:event_shellCommandKeyPressed
   public void receiveResponse(String s) {
     shellText.append(s + "\n");
+    shellChooser.rescanCurrentDirectory();
   }// GEN-LAST:event_shellCommandKeyPressed
+  
+  private final JFrame manPopup = new JFrame("");
+  JEditorPane manJep = new JEditorPane();;
+  JScrollPane manJsp = new JScrollPane(manJep);;
+  
+  public void popupManPage(String cmd_name, boolean from_cmd_line) {
+    FormatMan fm = new FormatMan(cmd_name);
+    String html = "";
+    try {
+      html = fm.format();
+    } catch (IOException e) {} catch (InterruptedException e) {}
+    
+    manPopup.setTitle(cmd_name);
+    
+    manJep.setEditable(false);
+    manJep.setText(html);
+    try {
+      manJep.setContentType("text/html");
+      manJep.read(new StringReader(html), new HTMLDocument());
+    } catch (IOException e) {}
+    
+    manJsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    manJsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    manJsp.setPreferredSize(new Dimension(720, 640));
+    manJsp.setMinimumSize(new Dimension(50, 50));
+    
+    manPopup.add(manJsp);
+    
+    manPopup.pack();
+    manPopup.setVisible(true);
+    if (!from_cmd_line) {
+      receiveResponse("# man " + cmd_name + "\n");
+    } else {
+      receiveResponse("# man " + cmd_name);
+      
+    }
+  }
   
   public void directoryChange(String dir) {
     shellChooser.setCurrentDirectory(new File(dir));
@@ -351,7 +436,7 @@ public class GUI extends javax.swing.JFrame {
   private javax.swing.JPanel fileViewerFrame;
   private javax.swing.JFrame jFrame1;
   private javax.swing.JScrollPane jScrollPane1;
-  private javax.swing.JTextArea jTextArea2;
+  private javax.swing.JList manPageList;
   private javax.swing.JTextField jTextField1;
   private java.awt.Label label1;
   private java.awt.Menu menu1;
