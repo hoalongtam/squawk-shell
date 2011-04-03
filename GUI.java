@@ -50,6 +50,7 @@ public class GUI extends javax.swing.JFrame {
   /** Creates new form GUI */
   public GUI() {
     initComponents();
+    ShellChooser.setDragEnabled(true);
     try {
       ci = new CommandInterface(this);
     } catch (IOException ex) {
