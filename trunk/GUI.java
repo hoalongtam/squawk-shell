@@ -63,7 +63,7 @@ public class GUI extends javax.swing.JFrame {
       ci = new CommandInterface(this);
       ci.apropos();
     } catch (Exception ex) {
-      System.err.println("IOException of some sort.");
+      ex.printStackTrace();
     }
     
     shellCommand.requestFocus();
@@ -246,7 +246,7 @@ public class GUI extends javax.swing.JFrame {
     
     shellText.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
     shellText.setEditable(false);
-    
+    shellText.setFont(new java.awt.Font("Monaco", 0, 12));
     javax.swing.GroupLayout shellBodyLayout = new javax.swing.GroupLayout(shellBody);
     shellBody.setLayout(shellBodyLayout);
     shellBodyLayout.setHorizontalGroup(shellBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -395,7 +395,7 @@ public class GUI extends javax.swing.JFrame {
     
     manPopup.pack();
     manPopup.setVisible(true);
-    receiveResponse("# man " + cmd_name);
+    receiveResponse("bash # man " + cmd_name);
     
   }
   

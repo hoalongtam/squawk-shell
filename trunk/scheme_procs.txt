@@ -1,0 +1,395 @@
+abs Ch6
+accumulate Ch19
+acronym Ch1, Ch1, Ch8, Ch14
+add Ch16
+add-field ProjDB
+add-move Ch20
+add-numbers Ch8, Ch14
+add-three Ch9
+add-three-to-each Ch9
+addup Ch14
+all-evaluated? Ch25
+already-won? Ch20
+already-won? (exercise) Ch10
+always-one Ch8
+amazify (exercise) Ch8
+american-time (exercise) Ch6
+any-numbers? Ch8
+aplize (exercise) Ch9
+apl-sqrt (exercise) Ch9
+appearances (exercise) Ch9
+arabic (exercise) Ch12
+area Ch19
+arg-count Ch21
+ask ProjDB
+ask-for-name Ch20
+ask-question Ch20
+ask-user Ch20
+average Ch4
+backwards Ch9
+base-grade (exercise) Ch8, Ch12
+beatle-number Ch8
+before-in-list? (exercise) Ch17
+best-free-square Ch10
+best-move Ch10
+best-square Ch10
+best-square-helper Ch10
+bill (exercise) Ch23
+bottles Ch20
+bound-check Ch25
+branch (exercise) Ch17
+bridge-val ProjBridge
+butfirst Ch17
+butlast Ch17
+buzz Ch6
+card-list Ch23
+card-val ProjBridge
+cell-children Ch25
+cell-expr Ch25
+cell-parents Ch25
+cell-structure Ch25
+cell-value Ch25
+char-count Ch22
+children Ch18
+choices Ch1
+choose-beatles (exercise) Ch8
+choose-win Ch10
+circle-area Ch9, Ch19
+circumference Ch9
+cities Ch18
+clear-current-db! ProjDB
+combinations Ch1
+command-loop Ch25
+common-words (exercise) Ch9
+compose (exercise) Ch9
+compute Ch18
+concatenate (exercise) Ch22
+converse (exercise) Ch20
+copies Ch14
+copies (exercise) Ch11
+count-adjacent-duplicates (exercise) Ch14
+count Ch8
+count-db ProjDB
+countdown (exercise) Ch11
+count-leaves Ch18, Ch18
+count-leaves-in-forest Ch18
+count-nodes (exercise) Ch18
+count-suit ProjBridge
+count-ums (exercise) Ch8, Ch11
+current-db ProjDB
+current-fields ProjDB
+datum Ch18
+db-fields ProjDB
+db-filename ProjDB
+db-insert ProjDB
+db-records ProjDB
+db-set-fields! ProjDB
+db-set-filename! ProjDB
+db-set-records! ProjDB
+deep-appearances Ch17
+deep-map Ch19
+deep-pigl Ch17, Ch19
+depth (exercise) Ch18
+describe (exercise) Ch9
+describe-time (exercise) Ch6, Ch12
+differences (exercise) Ch14
+disjoint-pairs Ch14
+divisible? Ch6
+double Ch8, Ch8
+doubles Ch14
+down Ch12
+downup Ch11, Ch11, Ch12
+earliest-word Ch15
+echo Ch20
+edit-record ProjDB
+effect Ch20
+ends-e? Ch8
+ends (exercise) Ch5
+ends-vowel? (exercise) Ch8
+european-time (exercise) Ch6
+even-count? (exercise) Ch8
+evens Ch12
+every Ch19
+every-nth Ch14
+every-nth-helper Ch14, Ch14
+exaggerate (exercise) Ch8, Ch12
+execute-command Ch25
+exhibit Ch25
+explode Ch11
+extract-digit Ch10
+extract-ids Ch25
+extra-spaces Ch22
+factorial Ch1, Ch12
+fib Ch13
+figure Ch25
+file-map Ch22
+file-map-helper Ch22
+filemerge Ch22
+filemerge-helper Ch22
+fill-array-with-rows Ch25
+fill-row-with-cells Ch25
+filter Ch19
+find-triples Ch10
+first-choice Ch10
+first Ch17
+first-if-any Ch10
+first-last (exercise) Ch9
+first-letters Ch8
+first-number Ch14
+first-two (exercise) Ch5
+flatten (exercise) Ch17
+flip Ch9
+fourth-power Ch9
+from-binary Ch15, Ch15
+functions-loop Ch21
+generic-before? ProjDB
+gertrude (exercise) Ch7
+get ProjDB
+get-arg Ch21
+get-args Ch21
+get-fn Ch21
+get-record ProjDB
+get-record-loop ProjDB
+get-song Ch22
+get-value Ch16
+global-array-lookup Ch25
+gpa (exercise) Ch8, Ch12
+greet Ch6
+greet (exercise) Ch6
+hand-dist-points ProjBridge
+hang (exercise) Ch9
+hang-letter (exercise) Ch9
+has-vowel? Ch14
+hexagon-area Ch19
+high-card-points ProjBridge
+hyphenate Ch8
+hypotenuse Ch4, Ch7
+i-can-advance? Ch10
+i-can-fork? Ch10
+i-can-win? Ch10
+increasing? Ch17
+indef-article (exercise) Ch6
+in-domain? Ch21
+in-forest? Ch18
+init-array Ch25
+initialize-lap-vector Ch23
+initials (exercise) Ch11
+insert ProjDB
+insert-and (exercise) Ch5
+integer-quotient Ch6
+in-tree? Ch18, Ch18
+item Ch8
+join (exercise) Ch22
+justify Ch22
+keeper Ch9
+keep-h Ch9
+knight (exercise) Ch5
+lap Ch23
+lambda
+last Ch17
+lastfirst Ch22
+leader (exercise) Ch23
+leaf Ch18
+leaf? Ch18
+let-it-be (exercise) Ch9
+letter-count (exercise) Ch8, Ch14
+letter-pairs Ch11, Ch14
+letterwords (exercise) Ch9
+list-db ProjDB
+list->vector Ch23
+lm-helper Ch16
+load-db ProjDB
+locate Ch18
+locate-in-forest Ch18
+location Ch20
+location (exercise) Ch14
+longest-match Ch16
+lookup Ch16, Ch17
+lookup (exercise) Ch22
+lots-of-effect Ch20
+lots-of-value Ch20
+make-adder Ch9
+make-db ProjDB
+make-deck Ch23
+make-node Ch18
+map Ch19
+match Ch16
+match-special Ch16
+match-using-known-values Ch16
+max2 (exercise) Ch17
+maybe-display Ch20
+member-types-ok? Ch21
+merge Ch15
+merge (exercise) Ch14
+merge-copy Ch22
+merge-db ProjDB
+mergesort Ch15
+middle-names (exercise) Ch5
+music-critic Ch20
+my-pair? Ch10
+my-single? Ch10
+mystery (exercise) Ch17
+named-every Ch21
+named-keep Ch21
+name-table Ch20
+new-db ProjDB
+no-db? ProjDB
+number-name ProjSpell
+number-of-arguments Ch21
+numbers (exercise) Ch12
+num-divisible-by-4? Ch6
+odds (exercise) Ch14
+one-half Ch15
+opponent-can-win? Ch10
+opponent Ch10
+order Ch17
+order (exercise) Ch23
+other-half Ch15
+pad Ch22
+page (exercise) Ch22
+parse Ch18
+parse-scheme (exercise) Ch18
+phone-spell (exercise) Ch15
+phone-unspell (exercise) Ch8, Ch11
+pi Ch9
+pigl Ch1, Ch11
+pin-down Ch25
+pin-down-cell Ch25
+pivots Ch10
+play-ttt Ch20
+play-ttt-helper Ch20
+plural Ch6, Ch8
+plural (exercise) Ch6
+poker-value ProjPoker, ProjPoker
+praise Ch17
+prepend-every Ch1, Ch15
+prev-row Ch25
+print-file Ch22
+print-file-helper Ch22
+print-position Ch20
+print-row Ch20
+print-screen Ch25
+process-command Ch25
+process-grades Ch22
+progressive-squares? (exercise) Ch14
+prune (exercise) Ch18
+put-all-cells-in-col Ch25
+put-all-cells-in-row Ch25
+put-all-helper Ch25
+put Ch25
+put-expr Ch25
+put-formula-in-cell Ch25
+query (exercise) Ch5
+quoted? Ch25
+quoted-value Ch25
+real-accumulate Ch19
+real-word? Ch1, Ch8
+real-words (exercise) Ch12
+remdup (exercise) Ch14
+remove (exercise) Ch12
+remove-adjacent-duplicates (exercise) Ch14
+remove-once Ch15
+remove-once (exercise) Ch14
+repeated-numbers Ch10
+roman-value Ch6
+roots Ch7
+rotate Ch1
+safe-pigl Ch14
+safe-sqrt (exercise) Ch9
+same-arg-twice Ch9
+save-db ProjDB
+scheme-procedure Ch21
+scrunch-words Ch14
+second Ch5
+second (exercise) Ch9
+select-id! Ch25
+sent-before? Ch14
+sentence (exercise) Ch17
+sentence-version (exercise) Ch9
+sent-equal? Ch16
+sent-max Ch14
+sent-of-first-two Ch8
+set-cell-children! Ch25
+set-cell-expr! Ch25
+set-cell-parents! Ch25
+set-cell-value! Ch25
+set-current-db! ProjDB
+set-selected-row! Ch25
+setvalue Ch25
+show-addition Ch20
+show-and-return Ch20
+show-answer Ch21
+show-list Ch20
+shuffle! Ch23
+sign (exercise) Ch6
+skip-songs Ch22
+skip-value Ch16
+sort2 (exercise) Ch6
+sort Ch15, ProjDB
+sort-digits Ch10
+sort-on ProjDB
+spaces Ch22
+spell-digit Ch8
+spell-number (exercise) Ch12
+sphere-area Ch19
+sphere-surface-area Ch9
+sphere-volume Ch9
+spreadsheet Ch25
+square-area Ch19
+square Ch4, Ch9
+ss-eval Ch25
+stupid-ttt Ch20
+subsets Ch15
+substitute (exercise) Ch9
+substitute-letter Ch10
+substitute-triple Ch10
+substring? (exercise) Ch15
+substrings (exercise) Ch15
+subword Ch20
+subword (exercise) Ch8
+suit-counts ProjBridge
+suit-dist-points ProjBridge
+sum-square (exercise) Ch7
+sum-vector (exercise) Ch23
+superlative (exercise) Ch7
+syllables (exercise) Ch14
+teen? (exercise) Ch6
+third (exercise) Ch5
+third-person-singular (exercise) Ch6
+thismany (exercise) Ch6
+three-firsts Ch8
+tie-game? Ch20
+tie-game? (exercise) Ch10
+transform-beatles (exercise) Ch8
+translate Ch17, Ch17
+truefalse Ch6
+true-for-all? (exercise) Ch8
+true-for-all-pairs? (exercise) Ch19
+true-for-any-pair? (exercise) Ch19
+try-putting Ch25
+ttt Ch10, Ch10
+ttt-choose Ch10
+two-first (exercise) Ch5
+two-firsts Ch8
+two-first-sent (exercise) Ch5
+two-numbers? Ch21
+type-check (exercise) Ch9
+type-of (exercise) Ch6
+type-predicate Ch21
+unabbrev (exercise) Ch9
+unscramble (exercise) Ch15
+up (exercise) Ch14
+utensil (exercise) Ch6
+valid-date? (exercise) Ch6
+valid-fn-name? Ch21
+valid-infix? (exercise) Ch17
+value Ch20
+vector-append (exercise) Ch23
+vector-fill! (exercise) Ch23
+vector-map (exercise) Ch23
+vector-map! (exercise) Ch23
+vector-swap! Ch23
+verse Ch20, Ch20
+vowel? Ch8
+who (exercise) Ch9
+words (exercise) Ch8
