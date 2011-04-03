@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -44,13 +47,15 @@ public class CommandInterface {
   private InputStream stdout = null;
   private final Process process;
   private static HashMap<String, String> aproposBuffer;
+  private static HashSet<String> schemeBuffer;
+  private final String prompt = "bash # ";
   
   private final BufferedReader br, er;
   static private GUI viewer;
   
   private CommandInterface child;
   public String title;
-  private boolean master;
+  private final boolean master;
   private boolean shutdown;
   ShellListener sl, el;
   
@@ -58,9 +63,10 @@ public class CommandInterface {
     supportedShells = new HashMap<String, String>();
     // Code to get supported shells
     supportedShells.put("python", "python -i");
+    supportedShells.put("stk", "/Applications/STk/bin/stk-simply -interactive");
     
     process = Runtime.getRuntime().exec("/bin/bash");
-    title = "Bash";
+    title = "bash";
     stdin = process.getOutputStream();
     stderr = process.getErrorStream();
     stdout = process.getInputStream();
@@ -85,7 +91,7 @@ public class CommandInterface {
     stdout = process.getInputStream();
     br = new BufferedReader(new InputStreamReader(stdout));
     er = new BufferedReader(new InputStreamReader(stderr));
-    
+    master = false;
     sl = new ShellListener(br, this, viewer, true);
     el = new ShellListener(er, this, viewer, false);
     sl.start();
@@ -101,16 +107,19 @@ public class CommandInterface {
     } else if (child != null) {
       child = null;
     }
-    String line;
-    line = command;
-    viewer.receiveResponse("bash # " + line);
-    stdin.write(line.getBytes());
-    stdin.flush();
-    
-    line = "\necho \"#######\" `pwd`\n";
-    stdin.write(line.getBytes());
-    stdin.flush();
-    
+    String line = command;
+    if (master) {
+      viewer.receiveResponse(prompt + line);
+      stdin.write(line.getBytes());
+      stdin.flush();
+      line = "\necho \"#######\" `pwd`\n";
+      stdin.write(line.getBytes());
+      stdin.flush();
+    } else {
+      viewer.receiveResponse("STk> " + line);
+      stdin.write((line + "\n").getBytes());
+      stdin.flush();
+    }
   }
   
   public void terminate() {
@@ -179,6 +188,15 @@ public class CommandInterface {
     }
     
     parseManBuffer(sb.toString());
+    
+    schemeBuffer = new HashSet<String>();
+    File fin = new File("scheme_procs.txt");
+    man_output = new BufferedReader(new FileReader(fin));
+    sb = new StringBuilder();
+    line = null;
+    while ((line = man_output.readLine()) != null) {
+      schemeBuffer.add(line);
+    }
   }
   
   public void parseManBuffer(String s) {
@@ -204,10 +222,24 @@ public class CommandInterface {
   }
   
   public String[] searchBuffer(String c) {
+    
+    if (child != null) { return child.searchBuffer(c); }
+    
     LinkedList<String> items = new LinkedList<String>();
-    for (String key : aproposBuffer.keySet()) {
-      if (key.startsWith(c)) {
-        items.add(key + " -- " + aproposBuffer.get(key) + "\n");
+    if (master) {
+      for (String key : aproposBuffer.keySet()) {
+        if (key.startsWith(c)) {
+          items.add(key + " -- " + aproposBuffer.get(key) + "\n");
+        }
+      }
+    } else {
+      if (c.length() > 1) {
+        c = c.substring(1);
+        for (String key : schemeBuffer) {
+          if (key.startsWith(c)) {
+            items.add(key);
+          }
+        }
       }
     }
     String[] sarry = new String[items.size()];
