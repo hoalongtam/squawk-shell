@@ -87,8 +87,11 @@ public class FormatMan {
     }
 
     StringBuffer html = new StringBuffer();
+    html.append("<p style=\"font-family:menlo,monaco,courier,monospace\">");
+
     boolean underline = false;
     boolean bold = false;
+
     for (i = 0; i < j; i += 1) {
       byte letter = text_buf[i];
       byte format = format_buf[i];
@@ -108,15 +111,20 @@ public class FormatMan {
       }
       if (letter == '\n') {
         html.append("<br />\n");
+      } else if (letter == ' ') {
+        html.append("&nbsp;");
+      } else {
+        html.append((char)letter);
       }
-      html.append((char)letter);
     }
+    
+    html.append("</font>");
     
     return new String(html);
   }
 
   public static void main(String[] args) {
-    ParseMan p = new ParseMan("man");
+    FormatMan p = new FormatMan("man");
     try {
       System.out.println(p.format());
     } catch (Exception e) {}
