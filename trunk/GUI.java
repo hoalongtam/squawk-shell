@@ -1,6 +1,9 @@
 package squawkshell;
 
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.html.ListView;
@@ -23,14 +26,17 @@ import javax.swing.text.html.ListView;
 public class GUI extends javax.swing.JFrame {
 
 
-    private class CommandInterface {}
     private CommandInterface ci;
     private ListView folderView;
 
     /** Creates new form GUI */
     public GUI() {
         initComponents();
-        ci = null;//new CommandInterface(this);
+        try {
+            ci = new CommandInterface(this);
+        } catch (IOException ex) {
+        }
+        shellCommand.requestFocus();
         
         
     }
@@ -53,14 +59,12 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         fileViewerFrame = new javax.swing.JPanel();
-        jFileChooser1 = new javax.swing.JFileChooser();
+        shellChooser = new javax.swing.JFileChooser();
+        shellChooser.setControlButtonsAreShown(false);
         shellBody = new javax.swing.JPanel();
         shellCommand = new javax.swing.JTextField();
         shellText = new java.awt.TextArea();
         label1 = new java.awt.Label();
-        squawkMenu = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
 
         javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
         jFrame1.getContentPane().setLayout(jFrame1Layout);
@@ -105,14 +109,14 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(panelInfoLayout.createSequentialGroup()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 694, Short.MAX_VALUE))
         );
 
         fileViewerFrame.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
-        jFileChooser1.addActionListener(new java.awt.event.ActionListener() {
+        shellChooser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jFileChooser1ActionPerformed(evt);
+                shellChooserActionPerformed(evt);
             }
         });
 
@@ -122,19 +126,18 @@ public class GUI extends javax.swing.JFrame {
             fileViewerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fileViewerFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jFileChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(shellChooser, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+                .addContainerGap())
         );
         fileViewerFrameLayout.setVerticalGroup(
             fileViewerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileViewerFrameLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jFileChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(shellChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         shellBody.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
-        shellCommand.setText("jTextField1");
         shellCommand.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 shellCommandActionPerformed(evt);
@@ -170,18 +173,10 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(shellText, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shellCommand, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         label1.setText("label1");
-
-        jMenu1.setText("File");
-        squawkMenu.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        squawkMenu.add(jMenu2);
-
-        setJMenuBar(squawkMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -217,34 +212,32 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_shellCommandActionPerformed
 
     private void shellCommandKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_shellCommandKeyPressed
-        /*if(evt.getKeyCode() == evt.VK_ENTER) {
-        String s = shellCommand.getText();
-        String returned = ci.sendCommand(s);
-        shellCommand.setText("");
-        shellText.append("\n" + returned );
-        */
-        //GEN-FIRST:event_shellCommandKeyPressed
-        if(evt.getKeyCode() == evt.VK_ENTER) {
-                String s = shellCommand.getText();
-                shellText.append("> " + s +"\n");
-                //ci.sendCommand(s);
-               /* try {
-                    ci.sendCommand(s);
-                }
-                catch (java.io.IOException e){}
-                * */
+      //GEN-FIRST:event_shellCommandKeyPressed
+        if (evt.getKeyCode() == evt.VK_C){
+            if (evt.isControlDown()){
+                ci.terminate();
                 shellCommand.setText("");
+                return;
             }
-        }  //GEN-LAST:event_shellCommandKeyPressed
-        public void receiveResponse(String s){
-            shellText.append(s+"\n");
-
+        }
+        if(evt.getKeyCode() == evt.VK_ENTER) {
+            String s = shellCommand.getText();
+            shellText.append("> " + s +"\n");
+            try {
+                ci.sendCommand(s);
+            }
+            catch (java.io.IOException e){}
+            shellCommand.setText("");
+        }
+    }
+    //GEN-LAST:event_shellCommandKeyPressed
+    public void receiveResponse(String s){
+        shellText.append(s+"\n");
     }//GEN-LAST:event_shellCommandKeyPressed
 
-    private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooser1ActionPerformed
+    private void shellChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shellChooserActionPerformed
         // TODO add your handling code here:
-        System.out.printf("foo");
-    }//GEN-LAST:event_jFileChooser1ActionPerformed
+    }//GEN-LAST:event_shellChooserActionPerformed
 
     /**
     * @param args the command line arguments
@@ -259,10 +252,7 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel fileViewerFrame;
-    private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JFrame jFrame1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
@@ -272,9 +262,9 @@ public class GUI extends javax.swing.JFrame {
     private java.awt.MenuBar menuBar1;
     private javax.swing.JPanel panelInfo;
     private javax.swing.JPanel shellBody;
+    private javax.swing.JFileChooser shellChooser;
     private javax.swing.JTextField shellCommand;
     private java.awt.TextArea shellText;
-    private javax.swing.JMenuBar squawkMenu;
     // End of variables declaration//GEN-END:variables
 
 }
