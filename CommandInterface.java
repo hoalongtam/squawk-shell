@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 public class CommandInterface {
   
@@ -11,27 +12,30 @@ public class CommandInterface {
     BufferedReader ear;
     CommandInterface controller;
     GUI viewer;
+    boolean isOut;
     
     @Override
     public void run() {
       try {
         String line;
         while ((line = ear.readLine()) != null && !shutdown) {
-          if (dirSet) {
+          if (dirSet && isOut) {
             viewer.directoryChange(line);
             dirSet = false;
             System.out.println(line);
           } else {
+            dirSet = false;
             viewer.receiveResponse(line);
           }
         }
       } catch (java.io.IOException e) {}
     }
     
-    public ShellListener(BufferedReader br, CommandInterface c, GUI v) {
+    public ShellListener(BufferedReader br, CommandInterface c, GUI v, boolean out) {
       ear = br;
       controller = c;
       viewer = v;
+      isOut = out;
     }
     
   }
@@ -68,8 +72,8 @@ public class CommandInterface {
     viewer = v;
     master = true;
     
-    sl = new ShellListener(br, this, viewer);
-    el = new ShellListener(er, this, viewer);
+    sl = new ShellListener(br, this, viewer, true);
+    el = new ShellListener(er, this, viewer, false);
     sl.start();
     el.start();
   }
@@ -84,8 +88,8 @@ public class CommandInterface {
     br = new BufferedReader(new InputStreamReader(stdout));
     er = new BufferedReader(new InputStreamReader(stderr));
     
-    sl = new ShellListener(br, this, viewer);
-    el = new ShellListener(er, this, viewer);
+    sl = new ShellListener(br, this, viewer, true);
+    el = new ShellListener(er, this, viewer, false);
     sl.start();
     el.start();
   }
@@ -101,7 +105,7 @@ public class CommandInterface {
     }
     String line;
     line = command;
-    viewer.receiveResponse("> " + line);
+    viewer.receiveResponse("# " + line);
     stdin.write(line.getBytes());
     stdin.flush();
     
@@ -144,6 +148,11 @@ public class CommandInterface {
       } else {
         child.sendCommand("process");
       }
+      return true;
+    }
+    if (command.substring(0, 4).equals("man ")) {
+      StringTokenizer st = new StringTokenizer(command.substring(4), " ", false);
+      viewer.popupManPage((String)st.nextElement(), true);
       return true;
     }
     
