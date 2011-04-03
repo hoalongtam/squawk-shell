@@ -52,6 +52,7 @@ public class GUI extends javax.swing.JFrame {
   
   private CommandInterface ci;
   private ListView folderView;
+  boolean directory_change_intentional;
   
   /** Creates new form GUI */
   public GUI() {
@@ -98,8 +99,14 @@ public class GUI extends javax.swing.JFrame {
       public void propertyChange(PropertyChangeEvent evt) {
         if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
           try {
-            ci.sendCommand("cd "
-                           + shellChooser.getCurrentDirectory().getAbsolutePath());
+            if (!directory_change_intentional) {
+              String new_dir = shellChooser.getCurrentDirectory().getAbsolutePath();
+              String relative = new File(old_dir).toURI()
+                                                 .relativize(new File(new_dir).toURI())
+                                                 .getPath();
+              ci.sendCommand("cd " + relative);
+              old_dir = new_dir;
+            }
           } catch (IOException e) {}
         }
       }
@@ -165,7 +172,7 @@ public class GUI extends javax.swing.JFrame {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         if (evt.getClickCount() == 2) {
           int i = manPageList.locationToIndex(evt.getPoint());
-          popupManPage(cmd_names[i], false);
+          popupManPage(cmd_names[i]);
         }
       }
     });
@@ -368,7 +375,7 @@ public class GUI extends javax.swing.JFrame {
   JEditorPane manJep = new JEditorPane();;
   JScrollPane manJsp = new JScrollPane(manJep);;
   
-  public void popupManPage(String cmd_name, boolean from_cmd_line) {
+  public void popupManPage(String cmd_name) {
     FormatMan fm = new FormatMan(cmd_name);
     String html = "";
     try {
@@ -393,16 +400,16 @@ public class GUI extends javax.swing.JFrame {
     
     manPopup.pack();
     manPopup.setVisible(true);
-    if (!from_cmd_line) {
-      receiveResponse("# man " + cmd_name + "\n");
-    } else {
-      receiveResponse("# man " + cmd_name);
-      
-    }
+    receiveResponse("# man " + cmd_name);
   }
   
+  String old_dir = "";
+  
   public void directoryChange(String dir) {
+    old_dir = shellChooser.getCurrentDirectory().getAbsolutePath();
+    directory_change_intentional = true;
     shellChooser.setCurrentDirectory(new File(dir));
+    directory_change_intentional = false;
   }
   
   private void shellChooserActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_shellChooserActionPerformed

@@ -12,19 +12,15 @@ public class CommandInterface {
     BufferedReader ear;
     CommandInterface controller;
     GUI viewer;
-    boolean isOut;
     
     @Override
     public void run() {
       try {
         String line;
         while ((line = ear.readLine()) != null && !shutdown) {
-          if (dirSet && isOut) {
-            viewer.directoryChange(line);
-            dirSet = false;
-            System.out.println(line);
+          if (line.length() > 6 && line.substring(0, 7).equals("#######")) {
+            viewer.directoryChange(line.substring(8));
           } else {
-            dirSet = false;
             viewer.receiveResponse(line);
           }
         }
@@ -35,7 +31,6 @@ public class CommandInterface {
       ear = br;
       controller = c;
       viewer = v;
-      isOut = out;
     }
     
   }
@@ -53,7 +48,6 @@ public class CommandInterface {
   public String title;
   private boolean master;
   private boolean shutdown;
-  boolean dirSet = true;
   ShellListener sl, el;
   
   public CommandInterface(GUI v) throws java.io.IOException {
@@ -109,8 +103,7 @@ public class CommandInterface {
     stdin.write(line.getBytes());
     stdin.flush();
     
-    dirSet = true;
-    line = "\npwd\n";
+    line = "\necho \"#######\" `pwd`\n";
     stdin.write(line.getBytes());
     stdin.flush();
     
@@ -150,9 +143,9 @@ public class CommandInterface {
       }
       return true;
     }
-    if (command.substring(0, 4).equals("man ")) {
+    if (command.length() > 4 && command.substring(0, 4).equals("man ")) {
       StringTokenizer st = new StringTokenizer(command.substring(4), " ", false);
-      viewer.popupManPage((String)st.nextElement(), true);
+      viewer.popupManPage((String)st.nextElement());
       return true;
     }
     
