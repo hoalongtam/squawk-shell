@@ -40,17 +40,9 @@ public class FormatMan {
     Runtime r = Runtime.getRuntime();
     Process man = r.exec(String.format("man %s", page));
     InputStream man_output = man.getInputStream();
-    InputStream man_error = man.getErrorStream();
-    String formatted_output = "";
     
     int status = man.waitFor();
-    if (status != 0) {
-      int error_msg_size = man_error.available();
-      for (int i = 0; i < error_msg_size; i += 1) {
-        System.err.printf("%c", (char)man_error.read());
-      }
-      return "";
-    }
+    if (status != 0) { return null; }
     int output_size = man_output.available();
     byte[] buf = new byte[output_size];
     man_output.read(buf);

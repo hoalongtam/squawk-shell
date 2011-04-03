@@ -24,6 +24,7 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.StringTokenizer;
 
 import javax.swing.GroupLayout;
 import javax.swing.JEditorPane;
@@ -60,9 +61,11 @@ public class GUI extends javax.swing.JFrame {
     shellChooser.setDragEnabled(true);
     try {
       ci = new CommandInterface(this);
-    } catch (IOException ex) {
+      ci.apropos();
+    } catch (Exception ex) {
       System.err.println("IOException of some sort.");
     }
+    
     shellCommand.requestFocus();
     try {
       ci.sendCommand("cd $HOME");
@@ -132,38 +135,7 @@ public class GUI extends javax.swing.JFrame {
     
     manPageList.setFixedCellWidth(20);
     manPageList.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
-    manPageList.setModel(new javax.swing.AbstractListModel() {
-      private static final long serialVersionUID = 1L;
-      String[] items = { "apropos -- search the whatis database for strings",
-                        "awk -- pattern-directed scanning and processing language",
-                        "cat -- concatenate and print files",
-                        "cd -- change directory",
-                        "chmod -- change file modes or Access Control Lists",
-                        "cp -- copy files", "diff - compare files line by line",
-                        "echo -- write arguments to the standard output",
-                        "grep -- print lines matching a pattern",
-                        "kill -- terminate or signal a process",
-                        "ls -- list directory contents",
-                        "man -- format and display the on-line manual pages",
-                        "mkdir -- make directories", "mv -- move files",
-                        "rm -- remove directory entries",
-                        "rmdir -- remove directories",
-                        "scp -- secure copy (remote file copy program)",
-                        "sed -- stream editor" };
-      
-      @Override
-      public int getSize() {
-        return items.length;
-      }
-      
-      @Override
-      public Object getElementAt(int i) {
-        return items[i];
-      }
-    });
-    final String[] cmd_names = { "apropos", "awk", "cat", "cd", "chmod", "cp",
-                                "diff", "echo", "grep", "kill", "ls", "man",
-                                "mkdir", "mv", "rm", "rmdir", "scp", "sed" };
+    manPageList.setModel(new Model());
     
     manPageList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
     manPageList.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -172,7 +144,9 @@ public class GUI extends javax.swing.JFrame {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         if (evt.getClickCount() == 2) {
           int i = manPageList.locationToIndex(evt.getPoint());
-          popupManPage(cmd_names[i]);
+          StringTokenizer st = new StringTokenizer(
+                                                   (String)manPageList.getSelectedValue());
+          popupManPage(st.nextToken());
         }
       }
     });
@@ -254,6 +228,19 @@ public class GUI extends javax.swing.JFrame {
       @Override
       public void keyPressed(java.awt.event.KeyEvent evt) {
         shellCommandKeyPressed(evt);
+      }
+      
+      @Override
+      public void keyReleased(java.awt.event.KeyEvent evt) {
+        // Apropos Man Page Command Checker
+        StringTokenizer st = new StringTokenizer(shellCommand.getText());
+        if (st.hasMoreTokens()) {
+          String[] items = ci.searchBuffer(st.nextToken());
+          manPageList.setModel(new Model(items));
+          manPageList.repaint();
+        } else {
+          manPageList.setModel(new Model());
+        }
       }
     });
     
@@ -355,6 +342,7 @@ public class GUI extends javax.swing.JFrame {
       }
       
     }
+    
     if (evt.getKeyCode() == evt.VK_ENTER) {
       String s = shellCommand.getText();
       // shellText.append("> " + s + "\n");
@@ -377,30 +365,38 @@ public class GUI extends javax.swing.JFrame {
   
   public void popupManPage(String cmd_name) {
     FormatMan fm = new FormatMan(cmd_name);
-    String html = "";
+    String html = null;
     try {
       html = fm.format();
     } catch (IOException e) {} catch (InterruptedException e) {}
     
-    manPopup.setTitle(cmd_name);
-    
-    manJep.setEditable(false);
-    manJep.setText(html);
-    try {
-      manJep.setContentType("text/html");
-      manJep.read(new StringReader(html), new HTMLDocument());
-    } catch (IOException e) {}
-    
-    manJsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-    manJsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    manJsp.setPreferredSize(new Dimension(720, 640));
-    manJsp.setMinimumSize(new Dimension(50, 50));
-    
+    if (html != null) {
+      manPopup.setTitle(cmd_name);
+      
+      manJep.setEditable(false);
+      manJep.setText(html);
+      try {
+        manJep.setContentType("text/html");
+        manJep.read(new StringReader(html), new HTMLDocument());
+      } catch (IOException e) {}
+      
+      manJsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      manJsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+      manJsp.setPreferredSize(new Dimension(720, 640));
+      manJsp.setMinimumSize(new Dimension(50, 50));
+    } else {
+      manPopup.setTitle("Error!");
+      manJep.setEditable(false);
+      manJep.setText("No manual page found.");
+      manJsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+      manJsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    }
     manPopup.add(manJsp);
     
     manPopup.pack();
     manPopup.setVisible(true);
     receiveResponse("# man " + cmd_name);
+    
   }
   
   String old_dir = "";
@@ -453,6 +449,47 @@ public class GUI extends javax.swing.JFrame {
   private javax.swing.JFileChooser shellChooser;
   private javax.swing.JTextField shellCommand;
   private java.awt.TextArea shellText;
+  
   // End of variables declaration//GEN-END:variables
+  
+  private class Model extends javax.swing.AbstractListModel {
+    private static final long serialVersionUID = 1L;
+    String[] items = { "apropos -- search the whatis database for strings",
+                      "awk -- pattern-directed scanning and processing language",
+                      "cat -- concatenate and print files",
+                      "cd -- change directory",
+                      "chmod -- change file modes or Access Control Lists",
+                      "cp -- copy files", "diff - compare files line by line",
+                      "echo -- write arguments to the standard output",
+                      "grep -- print lines matching a pattern",
+                      "kill -- terminate or signal a process",
+                      "ls -- list directory contents",
+                      "man -- format and display the on-line manual pages",
+                      "mkdir -- make directories", "mv -- move files",
+                      "rm -- remove directory entries",
+                      "rmdir -- remove directories",
+                      "scp -- secure copy (remote file copy program)",
+                      "sed -- stream editor" };
+    
+    public Model() {}
+    
+    public Model(String[] args) {
+      items = args;
+    }
+    
+    @Override
+    public int getSize() {
+      return items.length;
+    }
+    
+    @Override
+    public Object getElementAt(int i) {
+      return items[i];
+    }
+  }
+  
+  final String[] cmd_names = { "apropos", "awk", "cat", "cd", "chmod", "cp", "diff",
+                              "echo", "grep", "kill", "ls", "man", "mkdir", "mv",
+                              "rm", "rmdir", "scp", "sed" };
   
 }
