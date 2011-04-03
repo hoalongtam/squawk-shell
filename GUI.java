@@ -54,6 +54,7 @@ public class GUI extends javax.swing.JFrame {
   private CommandInterface ci;
   private ListView folderView;
   boolean directory_change_intentional;
+  String[] defaultCommandList = null;
   
   /** Creates new form GUI */
   public GUI() {
@@ -154,7 +155,7 @@ public class GUI extends javax.swing.JFrame {
     jScrollPane1.setViewportView(manPageList);
     
     jTextField1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-    jTextField1.setText("List of Common Shell Commands");
+    jTextField1.setText("Common Commands");
     jTextField1.addActionListener(new java.awt.event.ActionListener() {
       @Override
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -239,7 +240,8 @@ public class GUI extends javax.swing.JFrame {
           manPageList.setModel(new Model(items));
           manPageList.repaint();
         } else {
-          manPageList.setModel(new Model());
+          manPageList.setModel(new Model(defaultCommandList));
+          manPageList.repaint();
         }
       }
     });
@@ -353,6 +355,15 @@ public class GUI extends javax.swing.JFrame {
     }
   }
   
+  public void setHelpModel(String[] s) {
+    manPageList.setModel(new Model(s));
+    manPageList.repaint();
+  }
+  
+  public void setDCL(String[] s) {
+    defaultCommandList = s;
+  }
+  
   // GEN-LAST:event_shellCommandKeyPressed
   public void receiveResponse(String s) {
     shellText.append(s + "\n");
@@ -454,27 +465,36 @@ public class GUI extends javax.swing.JFrame {
   
   private class Model extends javax.swing.AbstractListModel {
     private static final long serialVersionUID = 1L;
-    String[] items = { "apropos -- search the whatis database for strings",
-                      "awk -- pattern-directed scanning and processing language",
-                      "cat -- concatenate and print files",
-                      "cd -- change directory",
-                      "chmod -- change file modes or Access Control Lists",
-                      "cp -- copy files", "diff - compare files line by line",
-                      "echo -- write arguments to the standard output",
-                      "grep -- print lines matching a pattern",
-                      "kill -- terminate or signal a process",
-                      "ls -- list directory contents",
-                      "man -- format and display the on-line manual pages",
-                      "mkdir -- make directories", "mv -- move files",
-                      "rm -- remove directory entries",
-                      "rmdir -- remove directories",
-                      "scp -- secure copy (remote file copy program)",
-                      "sed -- stream editor" };
+    String[] items = null;
     
-    public Model() {}
+    String[] baseItems = {
+                          "apropos -- search the whatis database for strings",
+                          "awk -- pattern-directed scanning and processing language",
+                          "cat -- concatenate and print files",
+                          "cd -- change directory",
+                          "chmod -- change file modes or Access Control Lists",
+                          "cp -- copy files", "diff - compare files line by line",
+                          "echo -- write arguments to the standard output",
+                          "grep -- print lines matching a pattern",
+                          "kill -- terminate or signal a process",
+                          "ls -- list directory contents",
+                          "man -- format and display the on-line manual pages",
+                          "mkdir -- make directories", "mv -- move files",
+                          "rm -- remove directory entries",
+                          "rmdir -- remove directories",
+                          "scp -- secure copy (remote file copy program)",
+                          "sed -- stream editor" };
+    
+    public Model() {
+      items = baseItems;
+    }
     
     public Model(String[] args) {
-      items = args;
+      if (args != null) {
+        items = args;
+      } else {
+        items = baseItems;
+      }
     }
     
     @Override

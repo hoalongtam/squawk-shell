@@ -31,6 +31,10 @@ public class CommandInterface {
           }
         }
       } catch (java.io.IOException e) {}
+      
+      if (!master) {
+        viewer.setDCL(null);
+      }
     }
     
     public ShellListener(BufferedReader br, CommandInterface c, GUI v, boolean out) {
@@ -96,6 +100,7 @@ public class CommandInterface {
     el = new ShellListener(er, this, viewer, false);
     sl.start();
     el.start();
+    viewer.setDCL(schemeBuffer.toArray(new String[schemeBuffer.size()]));
   }
   
   public void sendCommand(String command) throws java.io.IOException {
@@ -127,6 +132,8 @@ public class CommandInterface {
       child.terminate();
       return;
     }
+    
+    viewer.setDCL(null);
     
     if (master) { return; }
     try {
